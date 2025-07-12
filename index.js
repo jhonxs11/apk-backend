@@ -1,18 +1,16 @@
 const express = require('express');
 const app = express();
-const port = process.env.PORT || 3000;
-
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.post('/data', (req, res) => {
-  console.log('Received data:', req.body);
-  res.send('Data received');
+// ✅ Test endpoint
+app.post('/api/test', (req, res) => {
+  console.log('Test data received:', req.body);
+  res.send('Test endpoint working!');
 });
 
-app.get('/', (req, res) => {
-  res.send('Kid monitoring backend is running');
-});
-
+// ✅ Start server
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
