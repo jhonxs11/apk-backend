@@ -9,6 +9,12 @@ app.post('/api/test', (req, res) => {
   res.send('Test endpoint working!');
 });
 
+// ✅ Location endpoint
+app.post('/api/location', (req, res) => {
+  console.log('Location received:', req.body);
+  res.send('Location received');
+});
+
 // ✅ Start server
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
